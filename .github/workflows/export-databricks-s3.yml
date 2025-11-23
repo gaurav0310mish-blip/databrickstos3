@@ -11,18 +11,21 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Install Databricks CLI
+      - name: Install Databricks CLI (classic)
         run: pip install databricks-cli
 
-      - name: Configure Databricks CLI (new style)
+      - name: Configure Databricks CLI
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          mkdir -p ~/.databricks
-          printf "host: \"%s\"\ntoken: \"%s\"\n" \
+          # Classic CLI uses ~/.databrickscfg in INI format
+          printf "[DEFAULT]\nhost = %s\ntoken = %s\n" \
             "${DATABRICKS_HOST}" "${DATABRICKS_TOKEN}" \
-            > ~/.databricks/config.yaml
+            > ~/.databrickscfg
+
+          echo "Databricks CLI configured:"
+          cat ~/.databrickscfg
 
       - name: Trigger Databricks Job
         run: |
