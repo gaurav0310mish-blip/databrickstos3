@@ -20,11 +20,9 @@ jobs:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
           mkdir -p ~/.databricks
-          cat << 'EOF' > ~/.databricks/config
-[default]
-host = ${DATABRICKS_HOST}
-token = ${DATABRICKS_TOKEN}
-EOF
+          printf "[default]\nhost = %s\ntoken = %s\n" \
+            "${DATABRICKS_HOST}" "${DATABRICKS_TOKEN}" \
+            > ~/.databricks/config
 
       - name: Trigger Databricks Job
         run: |
