@@ -15,12 +15,17 @@ jobs:
         run: |
           pip install databricks-cli
 
-      - name: Configure Databricks CLI
+      - name: Configure Databricks CLI (new style)
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          databricks configure --host "$DATABRICKS_HOST" --token "$DATABRICKS_TOKEN"
+          mkdir -p ~/.databricks
+          cat <<EOF > ~/.databricks/config
+[default]
+host = ${DATABRICKS_HOST}
+token = ${DATABRICKS_TOKEN}
+EOF
 
       - name: Trigger Databricks Job
         run: |
