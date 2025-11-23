@@ -11,7 +11,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Install Databricks CLI (new)
+      - name: Install Databricks CLI
         run: pip install databricks-cli
 
       - name: Configure Databricks CLI (new style)
@@ -20,13 +20,10 @@ jobs:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
           mkdir -p ~/.databricks
-          cat > ~/.databricks/config.yaml <<EOF
-host: "${DATABRICKS_HOST}"
-token: "${DATABRICKS_TOKEN}"
-EOF
+          printf "host: \"%s\"\ntoken: \"%s\"\n" \
+            "${DATABRICKS_HOST}" "${DATABRICKS_TOKEN}" \
+            > ~/.databricks/config.yaml
 
       - name: Trigger Databricks Job
-        env:
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
           databricks jobs run-now --job-id ${{ secrets.DATABRICKS_JOB_ID }}
